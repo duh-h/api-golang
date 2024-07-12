@@ -2,6 +2,7 @@ package main
 
 import (
 	"api-golang/controller"
+	"api-golang/usercase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,9 +10,10 @@ import (
 func main() {
 	server := gin.Default()
 
-	ProductController := controller.NewProductController()
+	ProductUsercase := usercase.NewProductUsercase()
+	ProductController := controller.NewProductController(ProductUsercase)
 
-	server.GET("/", func(ctx *gin.Context) {
+	server.GET("/hello", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "hello",
 		})
