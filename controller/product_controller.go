@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"api-golang/model"
 	"api-golang/usercase"
 	"net/http"
 
@@ -20,12 +19,11 @@ func NewProductController(usecase usercase.ProductUsercase) ProductController {
 
 func (p *ProductController) GetProduct(ctx *gin.Context) {
 
-	products := []model.Product{
-		{
-			ID:    1,
-			Name:  "batata",
-			Price: 2.7,
-		},
+	products, err := p.ProductUsercase.GetProduct()
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
 	}
+
 	ctx.JSON(http.StatusOK, products)
 }

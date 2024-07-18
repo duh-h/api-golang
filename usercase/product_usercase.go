@@ -1,14 +1,20 @@
 package usercase
 
-import "api-golang/model"
+import (
+	"api-golang/model"
+	"api-golang/repository"
+)
 
 type ProductUsercase struct {
+	repository repository.ProductRepository
 }
 
-func NewProductUsercase() ProductUsercase {
-	return ProductUsercase{}
+func NewProductUsercase(repo repository.ProductRepository) ProductUsercase {
+	return ProductUsercase{
+		repository: repo,
+	}
 }
 
 func (pu *ProductUsercase) GetProduct() ([]model.Product, error) {
-	return []model.Product{}, nil
+	return pu.repository.GetProducts()
 }
