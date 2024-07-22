@@ -15,8 +15,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	ProductRepository := repository.NewProductRepository(dbConnection)
-	ProductUsercase := usercase.NewProductUsercase(ProductRepository)
+	ProductUsercase := usercase.NewProductUseCase(ProductRepository)
 	ProductController := controller.NewProductController(ProductUsercase)
 
 	server.GET("/hello", func(ctx *gin.Context) {
@@ -26,5 +27,7 @@ func main() {
 	})
 
 	server.GET("/products", ProductController.GetProduct)
-	server.Run(":8080")
+	server.POST("/product", ProductController.CreateProduct)
+	server.GET("/product/:productId", ProductController.GetProductById)
+	server.Run(":8000")
 }
