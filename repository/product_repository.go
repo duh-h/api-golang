@@ -89,3 +89,63 @@ func (pr *ProductRepository) GetProductById(id_produto int) (*model.Product, err
 
 	return &produto, nil
 }
+
+func (pr *ProductRepository) DeleteProductById(id_produto int) (*model.Product, error) {
+
+	querry, err := pr.connection.Prepare("DELETE FROM product WHERE id = $1 RETURNING id, product_name, price")
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var produto model.Product
+
+	err = querry.QueryRow(id_produto).Scan(
+		&produto.ID,
+		&produto.Name,
+		&produto.Price,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	querry.Close()
+
+	return &produto, nil
+
+}
+
+func (pr *ProductRepository) UpdateProductById(price float64, id_produto int) (*model.Product, error) {
+
+	querry, err := pr.connection.Prepare("UPDATE product SET price = $1 WHERE id = $2 RETURNING id, product_name, price")
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var produto model.Product
+
+	err = querry.QueryRow(price, id_produto).Scan(
+		&produto.ID,
+		&produto.Name,
+		&produto.Price,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	querry.Close()
+
+	return &produto, nil
+
+}
