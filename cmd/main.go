@@ -20,11 +20,17 @@ func main() {
 	ProductUsercase := usercase.NewProductUseCase(ProductRepository)
 	ProductController := controller.NewProductController(ProductUsercase)
 
+	UserRepository := repository.NewUserRepository(dbConnection)
+	UserUsercase := usercase.NewUserUseCase(UserRepository)
+	UserController := controller.NewUserController(UserUsercase)
+
 	server.GET("/hello", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "hello",
 		})
 	})
+
+	server.POST("/users", UserController.CreateUser)
 
 	server.GET("/products", ProductController.GetProduct)
 	server.POST("/product", ProductController.CreateProduct)
