@@ -40,16 +40,13 @@ func main() {
 	server.POST("/login", LoginController.Login)
 	server.POST("/users", UserController.CreateUser)
 
-	productRoutes := server.Group("/product")
-	productRoutes.Use(middleware.Auth(jwtService))
-	{
+	productRoutes := server.Group("/product", middleware.Auth(jwtService))
 
-		server.GET("/", ProductController.GetProduct)
-		server.POST("/", ProductController.CreateProduct)
-		server.GET("/:productId", ProductController.GetProductById)
-		server.DELETE("/:productId", ProductController.DeleteProductById)
-		server.PUT("/:productId", ProductController.UpdateProductById)
+	productRoutes.GET("/", ProductController.GetProduct)
+	productRoutes.POST("/", ProductController.CreateProduct)
+	productRoutes.GET("/:productId", ProductController.GetProductById)
+	productRoutes.DELETE("/:productId", ProductController.DeleteProductById)
+	productRoutes.PUT("/:productId", ProductController.UpdateProductById)
 
-	}
 	server.Run(":8000")
 }
