@@ -2,7 +2,7 @@ package model
 
 type User struct {
 	ID       int    `json:"id"`
-	Name     string `json:"name"`
+	Name     string `json:"user_name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	/*CreatedAt time.Time      `json:"created"`

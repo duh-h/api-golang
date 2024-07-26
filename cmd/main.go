@@ -4,6 +4,8 @@ import (
 	"api-golang/controller"
 	"api-golang/db"
 	"api-golang/repository"
+	"api-golang/server/middleware"
+	"api-golang/service"
 	"api-golang/usercase"
 
 	"github.com/gin-gonic/gin"
@@ -24,18 +26,30 @@ func main() {
 	UserUsercase := usercase.NewUserUseCase(UserRepository)
 	UserController := controller.NewUserController(UserUsercase)
 
+	LoginRepository := repository.NewLoginRepository(dbConnection)
+	jwtService := service.NewJWTService()
+	LoginUsercase := usercase.NewLoginUsecase(LoginRepository, &jwtService)
+	LoginController := controller.NewLoginController(LoginUsercase)
+
 	server.GET("/hello", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "hello",
 		})
 	})
 
+	server.POST("/login", LoginController.Login)
 	server.POST("/users", UserController.CreateUser)
 
-	server.GET("/products", ProductController.GetProduct)
-	server.POST("/product", ProductController.CreateProduct)
-	server.GET("/product/:productId", ProductController.GetProductById)
-	server.DELETE("/product/:productId", ProductController.DeleteProductById)
-	server.PUT("/product/:productId", ProductController.UpdateProductById)
+	productRoutes := server.Group("/product")
+	productRoutes.Use(middleware.Auth(jwtService))
+	{
+
+		server.GET("/", ProductController.GetProduct)
+		server.POST("/", ProductController.CreateProduct)
+		server.GET("/:productId", ProductController.GetProductById)
+		server.DELETE("/:productId", ProductController.DeleteProductById)
+		server.PUT("/:productId", ProductController.UpdateProductById)
+
+	}
 	server.Run(":8000")
 }
